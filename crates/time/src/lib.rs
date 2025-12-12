@@ -1,4 +1,4 @@
-use std::{fmt::Display, ops::{Deref, DerefMut}, str::FromStr};
+use std::{fmt::Display, ops::{Deref, DerefMut}, str::FromStr, time::SystemTime};
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -568,6 +568,12 @@ impl <Y, M, D, H, MM, S> TryFrom<(Y, M, D, H, MM, S)> for DateTime where Y: Into
     type Error = TryFromTimeError;
     fn try_from(value: (Y, M, D, H, MM, S)) -> Result<Self, Self::Error> {
         Ok(DateTime(UtcTime.with_ymd_and_hms(value.0.into().0, value.1.into().0, value.2.into().0, value.3.into().0, value.4.into().0, value.5.into().0).single().ok_or(TryFromTimeError::OutOfBounds)?))
+    }
+}
+
+impl From<SystemTime> for DateTime {
+    fn from(value: SystemTime) -> Self {
+        Self(ChronoDateTime::<UtcTime>::from(value))
     }
 }
 
