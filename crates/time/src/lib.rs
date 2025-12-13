@@ -1,5 +1,6 @@
 use std::{fmt::Display, ops::{Deref, DerefMut}, str::FromStr, time::SystemTime};
 
+use bincode::{Decode, Encode};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use chrono::{NaiveDate as ChronoDate, NaiveTime as ChronoTime, DateTime as ChronoDateTime, TimeZone};
@@ -32,7 +33,7 @@ fn test() {
 // #=== DATE TYPES ===#
 
 /// Type representing a year. Can be used in for serializing dates.
-#[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize, Decode, Encode)]
 pub struct Year(i32);
 impl Year {
     /// Returns the current UTC year
@@ -89,7 +90,7 @@ impl skytable::response::FromValue for Year {
 }
 
 /// Type representing a month. Can be used in for serializing dates.
-#[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize, Decode, Encode)]
 pub struct Month(u32);
 impl Month {
     /// Returns the current UTC month
@@ -186,7 +187,7 @@ impl skytable::response::FromValue for Month {
 }
 
 /// Type representing a day. Can be used in for serializing dates.
-#[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize, Decode, Encode)]
 pub struct Day(u32);
 impl Day {
     /// Returns the current UTC day
@@ -244,7 +245,6 @@ impl skytable::response::FromValue for Day {
 }
 
 /// Type representing a date. Can be used in for serializing dates.
-/// This type is guaranteed to be valid, otherwise cannot be initialized.
 #[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Date(ChronoDate);
 impl Date {
@@ -292,6 +292,33 @@ impl DerefMut for Date {
     }
 }
 
+impl<Context> bincode::Decode<Context> for Date {
+    fn decode<D: bincode::de::Decoder<Context = Context>>(
+        decoder: &mut D,
+    ) -> core::result::Result<Self, bincode::error::DecodeError> {
+        let string: String = bincode::Decode::decode(decoder)?;
+        Ok(Self::from_str(&string).unwrap())
+    }
+}
+impl<'de, Context> bincode::BorrowDecode<'de, Context> for Date {
+    fn borrow_decode<D: bincode::de::BorrowDecoder<'de, Context = Context>>(
+        decoder: &mut D,
+    ) -> core::result::Result<Self, bincode::error::DecodeError> {
+        let string: String = bincode::BorrowDecode::borrow_decode(decoder)?;
+        Ok(Self::from_str(&string).unwrap())
+    }
+}
+impl bincode::Encode for Date {
+    fn encode<E: bincode::enc::Encoder>(
+        &self,
+        encoder: &mut E,
+    ) -> core::result::Result<(), bincode::error::EncodeError> {
+        bincode::Encode::encode(&self.0.to_string(), encoder)?;
+        Ok(())
+    }
+}
+
+
 #[cfg(feature = "skytable")]
 impl skytable::query::SQParam for Date {
     fn append_param(&self, q: &mut Vec<u8>) -> usize {
@@ -310,7 +337,7 @@ impl skytable::response::FromValue for Date {
 // #=== TIME TYPES ===#
 
 /// Type representing an hour. Can be used in for serializing time.
-#[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize, Decode, Encode)]
 pub struct Hour(u32);
 impl Hour {
     /// Returns the current UTC hour
@@ -363,7 +390,7 @@ impl skytable::response::FromValue for Hour {
 }
 
 /// Type representing a minute. Can be used in for serializing time.
-#[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize, Decode, Encode)]
 pub struct Minute(u32);
 impl Minute {
     /// Returns the current UTC minute
@@ -416,7 +443,7 @@ impl skytable::response::FromValue for Minute {
 }
 
 /// Type representing a second. Can be used in for serializing time.
-#[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize, Decode, Encode)]
 pub struct Second(u32);
 impl Second {
     /// Returns the current UTC second
@@ -517,6 +544,32 @@ impl DerefMut for Time {
     }
 }
 
+impl<Context> bincode::Decode<Context> for Time {
+    fn decode<D: bincode::de::Decoder<Context = Context>>(
+        decoder: &mut D,
+    ) -> core::result::Result<Self, bincode::error::DecodeError> {
+        let string: String = bincode::Decode::decode(decoder)?;
+        Ok(Self::from_str(&string).unwrap())
+    }
+}
+impl<'de, Context> bincode::BorrowDecode<'de, Context> for Time {
+    fn borrow_decode<D: bincode::de::BorrowDecoder<'de, Context = Context>>(
+        decoder: &mut D,
+    ) -> core::result::Result<Self, bincode::error::DecodeError> {
+        let string: String = bincode::BorrowDecode::borrow_decode(decoder)?;
+        Ok(Self::from_str(&string).unwrap())
+    }
+}
+impl bincode::Encode for Time {
+    fn encode<E: bincode::enc::Encoder>(
+        &self,
+        encoder: &mut E,
+    ) -> core::result::Result<(), bincode::error::EncodeError> {
+        bincode::Encode::encode(&self.0.to_string(), encoder)?;
+        Ok(())
+    }
+}
+
 #[cfg(feature = "skytable")]
 impl skytable::query::SQParam for Time {
     fn append_param(&self, q: &mut Vec<u8>) -> usize {
@@ -591,6 +644,32 @@ impl Deref for DateTime {
 impl DerefMut for DateTime {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
+    }
+}
+
+impl<Context> bincode::Decode<Context> for DateTime {
+    fn decode<D: bincode::de::Decoder<Context = Context>>(
+        decoder: &mut D,
+    ) -> core::result::Result<Self, bincode::error::DecodeError> {
+        let string: String = bincode::Decode::decode(decoder)?;
+        Ok(Self::from_str(&string).unwrap())
+    }
+}
+impl<'de, Context> bincode::BorrowDecode<'de, Context> for DateTime {
+    fn borrow_decode<D: bincode::de::BorrowDecoder<'de, Context = Context>>(
+        decoder: &mut D,
+    ) -> core::result::Result<Self, bincode::error::DecodeError> {
+        let string: String = bincode::BorrowDecode::borrow_decode(decoder)?;
+        Ok(Self::from_str(&string).unwrap())
+    }
+}
+impl bincode::Encode for DateTime {
+    fn encode<E: bincode::enc::Encoder>(
+        &self,
+        encoder: &mut E,
+    ) -> core::result::Result<(), bincode::error::EncodeError> {
+        bincode::Encode::encode(&self.0.to_string(), encoder)?;
+        Ok(())
     }
 }
 
