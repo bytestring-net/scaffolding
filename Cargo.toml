@@ -2,60 +2,60 @@
 #=== WORKSPACE INFO ===#
 
 [workspace]
+  members  = ["crates/*"]
   resolver = "2"
-  members = ["crates/*"]
 
 [workspace.package]
-  version = "0.1.0"
   edition = "2024"
+  version = "0.1.0"
 
-#========================#
-#=== PACKAGE SETTINGS ===#
+  #========================#
+  #=== PACKAGE SETTINGS ===#
 
 [profile.dev]
-  debug = 0
-  strip = "debuginfo"
+  debug     = 0
   opt-level = 0
+  strip     = "debuginfo"
 
 [profile.dev.package."*"]
   opt-level = 2
 
 [profile.release]
-  opt-level = 3
-  panic = 'abort'
-  debug = 0
-  strip = true
-  lto = "thin"
   codegen-units = 1
+  debug         = 0
+  lto           = "thin"
+  opt-level     = 3
+  panic         = 'abort'
+  strip         = true
 
-#===============================#
-#=== DEPENDENCIES & FEATURES ===#
+  #===============================#
+  #=== DEPENDENCIES & FEATURES ===#
 
 [workspace.dependencies]
   # CRATES
-  util_files         = { path = "crates/files", version = "0.1.0" }
-  util_logs          = { path = "crates/logs", version = "0.1.0" }
-  util_time          = { path = "crates/time", version = "0.1.0" }
+  util_files = { path = "crates/files", version = "0.1.0" }
+  util_logs  = { path = "crates/logs", version = "0.1.0" }
+  util_time  = { path = "crates/time", version = "0.1.0" }
 
   # STANDARD
-  chrono             = { version = "*", features = ["serde"] }
+  chrono = { version = "*", features = ["serde"] }
 
   # NETWORK
-  reqwest            = { version = "*" }
+  reqwest = { version = "*" }
 
   # UTILITIES
-  thiserror          = { version = "*" }
-  zip                = { version = "*" }
+  thiserror = { version = "*" }
+  zip       = { version = "*" }
 
   # SERIALIZATION
-  serde              = { version = "*", features = ["derive"] }
-  serde_json         = { version = "*", features = ["arbitrary_precision"] }
-  bincode            = { version = "*" }
-  toml               = { version = "*" }
-  skytable           = { version = "*" }
+  bincode    = { version = "=2.0.1" }
+  serde      = { version = "*", features = ["derive"] }
+  serde_json = { version = "*", features = ["arbitrary_precision"] }
+  skytable   = { version = "*" }
+  toml       = { version = "*" }
 
   # TERMINAL LOGS
-  tracing            = { version = "*" }
-  tracing-subscriber = { version = "*" }
   indicatif          = { version = "*" }
+  tracing            = { version = "*" }
   tracing-indicatif  = { version = "*" }
+  tracing-subscriber = { version = "*" }
