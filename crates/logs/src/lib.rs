@@ -206,24 +206,27 @@ macro_rules! cerror {
 // #=========================#
 // #=== TRACING FORMATTER ===#
 
-use tracing::level_filters::LevelFilter;
 use tracing_subscriber::{
+    EnvFilter, Layer,
     layer::SubscriberExt,
     util::{SubscriberInitExt, TryInitError},
 };
 
 /// Initialize tracing subscriber.
-pub fn tracing_init() {
-    try_tracing_init().unwrap();
+pub fn tracing_init(filter: &str) {
+    try_tracing_init(filter).expect("Failed to initialize tracing subscriber");
 }
 
 /// Try to initialize tracing subscriber.
-pub fn try_tracing_init() -> Result<(), TryInitError> {
+pub fn try_tracing_init(filter: &str) -> Result<(), TryInitError> {
+    // Define the filter
+    let filter = EnvFilter::new(filter);
+
     // Create the formatted logging layer
-    let fmt_layer = tracing_subscriber::fmt::layer().event_format(TracingFormatter);
+    let fmt_layer = tracing_subscriber::fmt::layer().event_format(TracingFormatter).with_filter(filter);
 
     // Create the tracing registry
-    tracing_subscriber::registry().with(fmt_layer).with(LevelFilter::INFO).try_init()
+    tracing_subscriber::registry().with(fmt_layer).try_init()
 }
 
 
