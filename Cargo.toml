@@ -33,26 +33,26 @@
 
 [workspace.dependencies]
   # CRATES
-  util_files = { path = "crates/files", version = "0.1.0" }
-  util_logs  = { path = "crates/logs", version = "0.1.0" }
-  util_time  = { path = "crates/time", version = "0.1.0" }
+  scaffolding_logs  = { path = "crates/logs", version = "0.1.0" }
+  scaffolding_time  = { path = "crates/time", version = "0.1.0" }
+  scaffolding_tokio = { path = "crates/tokio", version = "0.1.0" }
 
   # STANDARD
   chrono = { version = "*", features = ["serde"] }
+
+  # NETWORK
+  tokio      = { version = "*", features = ["macros", "rt", "signal"] }
+  tokio-util = { version = "*" }
 
   # NETWORK
   reqwest = { version = "*" }
 
   # UTILITIES
   thiserror = { version = "*" }
-  zip       = { version = "*" }
 
   # SERIALIZATION
-  bincode    = { version = "=2.0.1" }
-  serde      = { version = "*", features = ["derive"] }
-  serde_json = { version = "*", features = ["arbitrary_precision"] }
-  skytable   = { version = "*" }
-  toml       = { version = "*" }
+  bitcode = { version = "*" }
+  serde   = { version = "*", features = ["derive"] }
 
   # TERMINAL LOGS
   indicatif          = { version = "*" }

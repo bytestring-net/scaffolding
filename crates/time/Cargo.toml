@@ -2,20 +2,16 @@
 #=== PACKAGE INFO ===#
 
 [package]
-  name = "util_time"
-  version.workspace = true
   edition.workspace = true
+  name              = "scaffolding_time"
+  version.workspace = true
 
-#===============================#
-#=== DEPENDENCIES & FEATURES ===#
+  #===============================#
+  #=== DEPENDENCIES & FEATURES ===#
 
 [dependencies]
 
-  thiserror          = { workspace = true }
-  serde              = { workspace = true }
-  bincode            = { workspace = true }
-  chrono             = { workspace = true, features = ["serde"] }
-  skytable           = { workspace = true, optional = true }
-
-[features]
-  skytable = ["dep:skytable"]
+  bitcode   = { workspace = true }
+  chrono    = { workspace = true, features = ["serde"] }
+  serde     = { workspace = true }
+  thiserror = { workspace = true }

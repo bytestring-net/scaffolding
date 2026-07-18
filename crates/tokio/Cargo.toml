@@ -1,0 +1,14 @@
+#====================#
+#=== PACKAGE INFO ===#
+
+[package]
+  edition.workspace = true
+  name              = "scaffolding_tokio"
+  version.workspace = true
+
+  #===============================#
+  #=== DEPENDENCIES & FEATURES ===#
+
+[dependencies]
+  tokio      = { workspace = true }
+  tokio-util = { workspace = true }

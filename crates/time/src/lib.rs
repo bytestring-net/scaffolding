@@ -1,6 +1,6 @@
 use std::{fmt::Display, ops::{Deref, DerefMut}, str::FromStr, time::SystemTime};
 
-use bincode::{Decode, Encode};
+use bitcode::{Decode, Encode};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use chrono::{NaiveDate as ChronoDate, NaiveTime as ChronoTime, DateTime as ChronoDateTime, TimeZone};
@@ -75,19 +75,6 @@ impl AsMut<i32> for Year {
     }
 }
 
-#[cfg(feature = "skytable")]
-impl skytable::query::SQParam for Year {
-    fn append_param(&self, q: &mut Vec<u8>) -> usize {
-        self.0.append_param(q)
-    }
-}
-#[cfg(feature = "skytable")]
-impl skytable::response::FromValue for Year {
-    fn from_value(v: skytable::response::Value) -> skytable::ClientResult<Self> {
-        let data: i32 = skytable::response::FromValue::from_value(v)?;
-        Ok(Self::from(data))
-    }
-}
 
 /// Type representing a month. Can be used in for serializing dates.
 #[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize, Decode, Encode)]
@@ -172,19 +159,6 @@ impl AsMut<u32> for Month {
     }
 }
 
-#[cfg(feature = "skytable")]
-impl skytable::query::SQParam for Month {
-    fn append_param(&self, q: &mut Vec<u8>) -> usize {
-        self.0.append_param(q)
-    }
-}
-#[cfg(feature = "skytable")]
-impl skytable::response::FromValue for Month {
-    fn from_value(v: skytable::response::Value) -> skytable::ClientResult<Self> {
-        let data: u32 = skytable::response::FromValue::from_value(v)?;
-        Ok(Self::from(data))
-    }
-}
 
 /// Type representing a day. Can be used in for serializing dates.
 #[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize, Decode, Encode)]
@@ -230,19 +204,6 @@ impl AsMut<u32> for Day {
     }
 }
 
-#[cfg(feature = "skytable")]
-impl skytable::query::SQParam for Day {
-    fn append_param(&self, q: &mut Vec<u8>) -> usize {
-        self.0.append_param(q)
-    }
-}
-#[cfg(feature = "skytable")]
-impl skytable::response::FromValue for Day {
-    fn from_value(v: skytable::response::Value) -> skytable::ClientResult<Self> {
-        let data: u32 = skytable::response::FromValue::from_value(v)?;
-        Ok(Self::from(data))
-    }
-}
 
 /// Type representing a date. Can be used in for serializing dates.
 #[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize)]
@@ -292,47 +253,6 @@ impl DerefMut for Date {
     }
 }
 
-impl<Context> bincode::Decode<Context> for Date {
-    fn decode<D: bincode::de::Decoder<Context = Context>>(
-        decoder: &mut D,
-    ) -> core::result::Result<Self, bincode::error::DecodeError> {
-        let string: String = bincode::Decode::decode(decoder)?;
-        Ok(Self::from_str(&string).unwrap())
-    }
-}
-impl<'de, Context> bincode::BorrowDecode<'de, Context> for Date {
-    fn borrow_decode<D: bincode::de::BorrowDecoder<'de, Context = Context>>(
-        decoder: &mut D,
-    ) -> core::result::Result<Self, bincode::error::DecodeError> {
-        let string: String = bincode::BorrowDecode::borrow_decode(decoder)?;
-        Ok(Self::from_str(&string).unwrap())
-    }
-}
-impl bincode::Encode for Date {
-    fn encode<E: bincode::enc::Encoder>(
-        &self,
-        encoder: &mut E,
-    ) -> core::result::Result<(), bincode::error::EncodeError> {
-        bincode::Encode::encode(&self.0.to_string(), encoder)?;
-        Ok(())
-    }
-}
-
-
-#[cfg(feature = "skytable")]
-impl skytable::query::SQParam for Date {
-    fn append_param(&self, q: &mut Vec<u8>) -> usize {
-        self.to_string().append_param(q)
-    }
-}
-#[cfg(feature = "skytable")]
-impl skytable::response::FromValue for Date {
-    fn from_value(v: skytable::response::Value) -> skytable::ClientResult<Self> {
-        let data: String = skytable::response::FromValue::from_value(v)?;
-        Ok(Self::from_str(&data).unwrap())
-    }
-}
-
 // #==================#
 // #=== TIME TYPES ===#
 
@@ -375,19 +295,6 @@ impl AsMut<u32> for Hour {
     }
 }
 
-#[cfg(feature = "skytable")]
-impl skytable::query::SQParam for Hour {
-    fn append_param(&self, q: &mut Vec<u8>) -> usize {
-        self.0.append_param(q)
-    }
-}
-#[cfg(feature = "skytable")]
-impl skytable::response::FromValue for Hour {
-    fn from_value(v: skytable::response::Value) -> skytable::ClientResult<Self> {
-        let data: u32 = skytable::response::FromValue::from_value(v)?;
-        Ok(Self::from(data))
-    }
-}
 
 /// Type representing a minute. Can be used in for serializing time.
 #[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize, Decode, Encode)]
@@ -428,19 +335,6 @@ impl AsMut<u32> for Minute {
     }
 }
 
-#[cfg(feature = "skytable")]
-impl skytable::query::SQParam for Minute {
-    fn append_param(&self, q: &mut Vec<u8>) -> usize {
-        self.0.append_param(q)
-    }
-}
-#[cfg(feature = "skytable")]
-impl skytable::response::FromValue for Minute {
-    fn from_value(v: skytable::response::Value) -> skytable::ClientResult<Self> {
-        let data: u32 = skytable::response::FromValue::from_value(v)?;
-        Ok(Self::from(data))
-    }
-}
 
 /// Type representing a second. Can be used in for serializing time.
 #[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Serialize, Deserialize, Decode, Encode)]
@@ -481,19 +375,6 @@ impl AsMut<u32> for Second {
     }
 }
 
-#[cfg(feature = "skytable")]
-impl skytable::query::SQParam for Second {
-    fn append_param(&self, q: &mut Vec<u8>) -> usize {
-        self.0.append_param(q)
-    }
-}
-#[cfg(feature = "skytable")]
-impl skytable::response::FromValue for Second {
-    fn from_value(v: skytable::response::Value) -> skytable::ClientResult<Self> {
-        let data: u32 = skytable::response::FromValue::from_value(v)?;
-        Ok(Self::from(data))
-    }
-}
 
 /// Type representing a time. Can be used in for serializing dates.
 /// This type is guaranteed to be valid, otherwise cannot be initialized.
@@ -544,45 +425,6 @@ impl DerefMut for Time {
     }
 }
 
-impl<Context> bincode::Decode<Context> for Time {
-    fn decode<D: bincode::de::Decoder<Context = Context>>(
-        decoder: &mut D,
-    ) -> core::result::Result<Self, bincode::error::DecodeError> {
-        let string: String = bincode::Decode::decode(decoder)?;
-        Ok(Self::from_str(&string).unwrap())
-    }
-}
-impl<'de, Context> bincode::BorrowDecode<'de, Context> for Time {
-    fn borrow_decode<D: bincode::de::BorrowDecoder<'de, Context = Context>>(
-        decoder: &mut D,
-    ) -> core::result::Result<Self, bincode::error::DecodeError> {
-        let string: String = bincode::BorrowDecode::borrow_decode(decoder)?;
-        Ok(Self::from_str(&string).unwrap())
-    }
-}
-impl bincode::Encode for Time {
-    fn encode<E: bincode::enc::Encoder>(
-        &self,
-        encoder: &mut E,
-    ) -> core::result::Result<(), bincode::error::EncodeError> {
-        bincode::Encode::encode(&self.0.to_string(), encoder)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "skytable")]
-impl skytable::query::SQParam for Time {
-    fn append_param(&self, q: &mut Vec<u8>) -> usize {
-        self.to_string().append_param(q)
-    }
-}
-#[cfg(feature = "skytable")]
-impl skytable::response::FromValue for Time {
-    fn from_value(v: skytable::response::Value) -> skytable::ClientResult<Self> {
-        let data: String = skytable::response::FromValue::from_value(v)?;
-        Ok(Self::from_str(&data).unwrap())
-    }
-}
 
 // #=========================#
 // #=== DATE & TIME TYPES ===#
@@ -644,45 +486,5 @@ impl Deref for DateTime {
 impl DerefMut for DateTime {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
-    }
-}
-
-impl<Context> bincode::Decode<Context> for DateTime {
-    fn decode<D: bincode::de::Decoder<Context = Context>>(
-        decoder: &mut D,
-    ) -> core::result::Result<Self, bincode::error::DecodeError> {
-        let string: String = bincode::Decode::decode(decoder)?;
-        Ok(Self::from_str(&string).unwrap())
-    }
-}
-impl<'de, Context> bincode::BorrowDecode<'de, Context> for DateTime {
-    fn borrow_decode<D: bincode::de::BorrowDecoder<'de, Context = Context>>(
-        decoder: &mut D,
-    ) -> core::result::Result<Self, bincode::error::DecodeError> {
-        let string: String = bincode::BorrowDecode::borrow_decode(decoder)?;
-        Ok(Self::from_str(&string).unwrap())
-    }
-}
-impl bincode::Encode for DateTime {
-    fn encode<E: bincode::enc::Encoder>(
-        &self,
-        encoder: &mut E,
-    ) -> core::result::Result<(), bincode::error::EncodeError> {
-        bincode::Encode::encode(&self.0.to_string(), encoder)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "skytable")]
-impl skytable::query::SQParam for DateTime {
-    fn append_param(&self, q: &mut Vec<u8>) -> usize {
-        self.to_string().append_param(q)
-    }
-}
-#[cfg(feature = "skytable")]
-impl skytable::response::FromValue for DateTime {
-    fn from_value(v: skytable::response::Value) -> skytable::ClientResult<Self> {
-        let data: String = skytable::response::FromValue::from_value(v)?;
-        Ok(Self::from_str(&data).unwrap())
     }
 }

@@ -2,21 +2,21 @@
 #=== PACKAGE INFO ===#
 
 [package]
-  name = "util_logs"
-  version.workspace = true
   edition.workspace = true
+  name              = "scaffolding_logs"
+  version.workspace = true
 
-#===============================#
-#=== DEPENDENCIES & FEATURES ===#
+  #===============================#
+  #=== DEPENDENCIES & FEATURES ===#
 
 [dependencies]
-  tracing            = { workspace = true }
-  tracing-subscriber = { workspace = true }
-  indicatif          = { workspace = true }
-  tracing-indicatif  = { workspace = true }
   chrono             = { workspace = true }
+  indicatif          = { workspace = true }
+  tracing            = { workspace = true }
+  tracing-indicatif  = { workspace = true }
+  tracing-subscriber = { workspace = true }
 
-  reqwest            = { workspace = true, optional = true }
+  reqwest = { workspace = true, optional = true }
 
 [features]
   reqwest = ["dep:reqwest"]
