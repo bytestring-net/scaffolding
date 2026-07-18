@@ -1,7 +1,7 @@
 use tokio_util::sync::CancellationToken;
 
 /// Waits for either Ctrl+C (SIGINT) or Docker stop (SIGTERM).
-pub async fn shutdown_signal() -> CancellationToken {
+pub fn shutdown_signal() -> CancellationToken {
     
     // Create SIGINT async block
     let ctrl_c = async {
