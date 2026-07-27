@@ -63,7 +63,7 @@ macro_rules! hinfo {
             _header_color = $color,
             _header_text = $label,
             $fmt $(, $arg)*
-        );
+        )
     }
 }
 
@@ -80,7 +80,7 @@ macro_rules! hwarn {
             _header_color = $color,
             _header_text = $label,
             $fmt $(, $arg)*
-        );
+        )
     }
 }
 
@@ -97,7 +97,7 @@ macro_rules! herror {
             _header_color = $color,
             _header_text = $label,
             $fmt $(, $arg)*
-        );
+        )
     }
 }
 
@@ -115,7 +115,7 @@ macro_rules! hinfo_ext {
             _text_color = $color2,
             _header_text = $label,
             $fmt $(, $arg)*
-        );
+        )
     }
 }
 
@@ -133,7 +133,7 @@ macro_rules! hwarn_ext {
             _text_color = $color2,
             _header_text = $label,
             $fmt $(, $arg)*
-        );
+        )
     }
 }
 
@@ -151,7 +151,7 @@ macro_rules! herror_ext {
             _text_color = $color2,
             _header_text = $label,
             $fmt $(, $arg)*
-        );
+        )
     }
 }
 
@@ -167,7 +167,7 @@ macro_rules! cinfo {
         tr::info!(
             _text_color = $color,
             $fmt $(, $arg)*
-        );
+        )
     }
 }
 
@@ -183,7 +183,7 @@ macro_rules! cwarn {
         tr::warn!(
             _text_color = $color,
             $fmt $(, $arg)*
-        );
+        )
     }
 }
 
@@ -199,7 +199,7 @@ macro_rules! cerror {
         tr::error!(
             _text_color = $color,
             $fmt $(, $arg)*
-        );
+        )
     }
 }
 
