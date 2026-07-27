@@ -64,7 +64,7 @@ macro_rules! hinfo {
             _header_text = $label,
             $fmt $(, $arg)*
         );
-    };
+    }
 }
 
 /// ## Header Warning
@@ -81,7 +81,7 @@ macro_rules! hwarn {
             _header_text = $label,
             $fmt $(, $arg)*
         );
-    };
+    }
 }
 
 /// ## Header Error
@@ -98,7 +98,7 @@ macro_rules! herror {
             _header_text = $label,
             $fmt $(, $arg)*
         );
-    };
+    }
 }
 
 /// ## Header Info Extended
@@ -116,7 +116,7 @@ macro_rules! hinfo_ext {
             _header_text = $label,
             $fmt $(, $arg)*
         );
-    };
+    }
 }
 
 /// ## Header Warning Extended
@@ -134,7 +134,7 @@ macro_rules! hwarn_ext {
             _header_text = $label,
             $fmt $(, $arg)*
         );
-    };
+    }
 }
 
 /// ## Header Error Extended
@@ -152,7 +152,7 @@ macro_rules! herror_ext {
             _header_text = $label,
             $fmt $(, $arg)*
         );
-    };
+    }
 }
 
 /// ## Info Colored
@@ -168,7 +168,7 @@ macro_rules! cinfo {
             _text_color = $color,
             $fmt $(, $arg)*
         );
-    };
+    }
 }
 
 /// ## Warning Colored
@@ -184,7 +184,7 @@ macro_rules! cwarn {
             _text_color = $color,
             $fmt $(, $arg)*
         );
-    };
+    }
 }
 
 /// ## Error Colored
@@ -200,7 +200,7 @@ macro_rules! cerror {
             _text_color = $color,
             $fmt $(, $arg)*
         );
-    };
+    }
 }
 
 // #=========================#
