@@ -1,6 +1,6 @@
-use std::{fmt::Display, ops::{Deref, DerefMut}, str::FromStr, time::SystemTime};
+use std::{fmt::Display, num::NonZeroUsize, ops::{Deref, DerefMut}, str::FromStr, time::SystemTime};
 
-use bitcode::{Decode, Encode};
+use bitcode::{__private::{Buffer, Decoder, Encoder, View}, Decode, Encode};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use chrono::{NaiveDate as ChronoDate, NaiveTime as ChronoTime, DateTime as ChronoDateTime, TimeZone};
@@ -253,6 +253,45 @@ impl DerefMut for Date {
     }
 }
 
+const _: () = {
+    #[derive(Default)]
+    pub struct DateEncoder(<i32 as Encode>::Encoder);
+    impl Encoder<Date> for DateEncoder {
+        #[inline(always)]
+        fn encode(&mut self, t: &Date) {
+            self.0.encode(&t.0.num_days_from_ce())
+        }
+    }
+    impl Buffer for DateEncoder {
+        fn collect_into(&mut self, out: &mut Vec<u8>) {
+            self.0.collect_into(out)
+        }
+        fn reserve(&mut self, additional: NonZeroUsize) {
+            self.0.reserve(additional)
+        }
+    }
+    impl Encode for Date {
+        type Encoder = DateEncoder;
+    }
+
+    #[derive(Default)]
+    pub struct DateDecoder<'a>(<i32 as Decode<'a>>::Decoder);
+    impl<'a> View<'a> for DateDecoder<'a> {
+        fn populate(&mut self, input: &mut &'a [u8], length: usize) -> bitcode::__private::Result<()> {
+            self.0.populate(input, length)
+        }
+    }
+    impl<'a> Decoder<'a, Date> for DateDecoder<'a> {
+        #[inline(always)]
+        fn decode(&mut self) -> Date {
+            Date(ChronoDate::from_num_days_from_ce_opt(self.0.decode()).expect("invalid Date"))
+        }
+    }
+    impl<'a> Decode<'a> for Date {
+        type Decoder = DateDecoder<'a>;
+    }
+};
+
 // #==================#
 // #=== TIME TYPES ===#
 
@@ -425,6 +464,46 @@ impl DerefMut for Time {
     }
 }
 
+const _: () = {
+    #[derive(Default)]
+    pub struct TimeEncoder(<(u32, u32) as Encode>::Encoder);
+    impl Encoder<Time> for TimeEncoder {
+        #[inline(always)]
+        fn encode(&mut self, t: &Time) {
+            self.0.encode(&(t.0.num_seconds_from_midnight(), t.0.nanosecond()))
+        }
+    }
+    impl Buffer for TimeEncoder {
+        fn collect_into(&mut self, out: &mut Vec<u8>) {
+            self.0.collect_into(out)
+        }
+        fn reserve(&mut self, additional: NonZeroUsize) {
+            self.0.reserve(additional)
+        }
+    }
+    impl Encode for Time {
+        type Encoder = TimeEncoder;
+    }
+
+    #[derive(Default)]
+    pub struct TimeDecoder<'a>(<(u32, u32) as Decode<'a>>::Decoder);
+    impl<'a> View<'a> for TimeDecoder<'a> {
+        fn populate(&mut self, input: &mut &'a [u8], length: usize) -> bitcode::__private::Result<()> {
+            self.0.populate(input, length)
+        }
+    }
+    impl<'a> Decoder<'a, Time> for TimeDecoder<'a> {
+        #[inline(always)]
+        fn decode(&mut self) -> Time {
+            let (secs, nanos) = self.0.decode();
+            Time(ChronoTime::from_num_seconds_from_midnight_opt(secs, nanos).expect("invalid Time"))
+        }
+    }
+    impl<'a> Decode<'a> for Time {
+        type Decoder = TimeDecoder<'a>;
+    }
+};
+
 
 // #=========================#
 // #=== DATE & TIME TYPES ===#
@@ -488,3 +567,43 @@ impl DerefMut for DateTime {
         &mut self.0
     }
 }
+
+const _: () = {
+    #[derive(Default)]
+    pub struct DateTimeEncoder(<(i64, u32) as Encode>::Encoder);
+    impl Encoder<DateTime> for DateTimeEncoder {
+        #[inline(always)]
+        fn encode(&mut self, t: &DateTime) {
+            self.0.encode(&(t.0.timestamp(), t.0.timestamp_subsec_nanos()))
+        }
+    }
+    impl Buffer for DateTimeEncoder {
+        fn collect_into(&mut self, out: &mut Vec<u8>) {
+            self.0.collect_into(out)
+        }
+        fn reserve(&mut self, additional: NonZeroUsize) {
+            self.0.reserve(additional)
+        }
+    }
+    impl Encode for DateTime {
+        type Encoder = DateTimeEncoder;
+    }
+
+    #[derive(Default)]
+    pub struct DateTimeDecoder<'a>(<(i64, u32) as Decode<'a>>::Decoder);
+    impl<'a> View<'a> for DateTimeDecoder<'a> {
+        fn populate(&mut self, input: &mut &'a [u8], length: usize) -> bitcode::__private::Result<()> {
+            self.0.populate(input, length)
+        }
+    }
+    impl<'a> Decoder<'a, DateTime> for DateTimeDecoder<'a> {
+        #[inline(always)]
+        fn decode(&mut self) -> DateTime {
+            let (secs, nanos) = self.0.decode();
+            DateTime(ChronoDateTime::<UtcTime>::from_timestamp(secs, nanos).expect("invalid DateTime"))
+        }
+    }
+    impl<'a> Decode<'a> for DateTime {
+        type Decoder = DateTimeDecoder<'a>;
+    }
+};
